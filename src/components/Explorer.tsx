@@ -21,6 +21,7 @@ import {
   LocateFixed,
 } from "lucide-react";
 import Search from "./Search";
+import { WorkIcon } from "./WorkVisual";
 import WorkDetail, { type Detail } from "./WorkDetail";
 import {
   date,
@@ -610,6 +611,13 @@ export default function Explorer() {
                           <span>{w.category}</span>
                         </div>
                         <div className="work-row-title">
+                          <span className="work-row-icon">
+                            <WorkIcon
+                              name={w.name}
+                              category={w.category}
+                              size={24}
+                            />
+                          </span>
                           <h2>{w.name}</h2>
                           <ArrowUpRight size={17} />
                         </div>

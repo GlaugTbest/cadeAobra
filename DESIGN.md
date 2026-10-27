@@ -95,8 +95,10 @@ Consulta imediata em um mapa escuro. A cartografia real dos municípios do IBGE 
 
 - **Verdes cartográficos:** rampa sequencial de petróleo a jade e sálvia aplicada à quantidade de obras únicas no recorte, com marcos em 0, 1, 5, 20, 100 e 500+. A legenda acompanha o mapa.
 - **Amarelo cálido:** contorno do município selecionado, pontos de obras, valores destacados, aba ativa e foco.
-- **Branco:** borda do município sob o mouse e centro dos pontos da obra aberta. Contornos escuros preservam a leitura sobre preenchimentos claros.
-- **Contexto municipal:** ao selecionar uma cidade, ela recebe verde jade e contorno dourado; os demais municípios ficam em verde discreto e continuam clicáveis. A legenda passa a explicar seleção, pontos e contexto, sem sugerir que os vizinhos têm zero obras. A obra aberta tem uma camada própria sem agrupamento. A legenda usa uma superfície opaca para manter contraste no celular.
+- **Branco:** borda do município sob o mouse. Contornos escuros preservam a leitura sobre preenchimentos claros.
+- **Contexto municipal:** ao selecionar uma cidade, ela recebe verde jade e contorno dourado; os demais municípios ficam em verde discreto e continuam clicáveis. A legenda explica seleção, marcadores e contexto, sem sugerir que os vizinhos têm zero obras. A legenda usa superfície opaca para manter contraste no celular.
+- **Marcadores de obras:** pins compactos com ícones de tipo e grupos retangulares com contagem de obras únicas. Tamanho fixo: 36px no desktop e 44px em dispositivos de toque. O afastamento reúne obras, sem aumentar os símbolos. A seleção recebe fundo dourado e ancora o grupo na coordenada real da obra aberta. Grupos abrem escolhas com título, ícone e situação. Nome acessível e tooltip identificam os marcadores; a lista continua como caminho equivalente. O chip de limites é ocultado no recorte municipal móvel para não encobrir marcadores.
+- **Representação visual:** ícones Lucide na lista e bloco de categoria na ficha, depois do título. Fotos somente quando houver imagem e vínculo de origem verificáveis; os registros atuais não fornecem URL de fotografia.
 
 ### Neutral
 

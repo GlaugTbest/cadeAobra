@@ -9,6 +9,7 @@ import {
   FileText,
   Share2,
 } from "lucide-react";
+import { WorkVisual } from "./WorkVisual";
 import {
   date,
   money,
@@ -67,6 +68,11 @@ export default function WorkDetail({
           · PI
         </p>
         <span className="record-id">Obrasgov {w.id}</span>
+        <WorkVisual
+          name={w.name}
+          category={w.category}
+          hasLocation={w.locations.length > 0}
+        />
       </div>
       <section className="detail-section">
         <h2>Sobre esta obra</h2>

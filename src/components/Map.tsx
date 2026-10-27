@@ -2,17 +2,13 @@
 import { useEffect, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import { type GeoJSONSource, type Map as GLMap } from "maplibre-gl";
-import type { FeatureCollection, Geometry } from "geojson";
+import type { Geometry } from "geojson";
 import { Layers, LocateFixed, Plus, Minus, X } from "lucide-react";
 import type { Boundary } from "@/lib/domain";
 import "maplibre-gl/dist/maplibre-gl.css";
-type Point = {
-  lng: number;
-  lat: number;
-  id: string;
-  name: string;
-  status: string;
-};
+import MapWorkMarkers from "./MapWorkMarkers";
+import { type MapPoint as Point } from "@/lib/map-markers";
+import { WorkIcon } from "./WorkVisual";
 type Props = {
   city: string;
   counts: Record<string, number>;
@@ -48,6 +44,7 @@ export default function MapView(props: Props) {
     [fallback, setFallback] = useState(false),
     [choices, setChoices] = useState<Point[]>([]),
     [hover, setHover] = useState({ id: "", name: "" });
+  useEffect(() => setChoices([]), [props.city, props.points]);
   useEffect(() => {
     const c = new AbortController();
     fetch("/data/piaui.geojson", { signal: c.signal })
@@ -153,73 +150,7 @@ export default function MapView(props: Props) {
             paint: { "line-color": color, "line-width": width },
           });
         }
-        m.addSource("points", {
-          type: "geojson",
-          data: { type: "FeatureCollection", features: [] },
-          cluster: true,
-          clusterMaxZoom: 13,
-          clusterRadius: 35,
-        });
-        m.addLayer({
-          id: "clusters",
-          type: "circle",
-          source: "points",
-          filter: ["has", "point_count"],
-          paint: {
-            "circle-radius": [
-              "step",
-              ["get", "point_count"],
-              11,
-              20,
-              16,
-              100,
-              21,
-            ],
-            "circle-color": "#edd79a",
-            "circle-stroke-color": "#17231f",
-            "circle-stroke-width": 3,
-          },
-        });
-        m.addLayer({
-          id: "pins",
-          type: "circle",
-          source: "points",
-          filter: ["!", ["has", "point_count"]],
-          paint: {
-            "circle-radius": 6,
-            "circle-color": "#edd79a",
-            "circle-stroke-color": "#192b24",
-            "circle-stroke-width": 2,
-          },
-        });
-        m.addSource("selected-points", {
-          type: "geojson",
-          data: { type: "FeatureCollection", features: [] },
-        });
-        m.addLayer({
-          id: "highlight-casing",
-          type: "circle",
-          source: "selected-points",
-          paint: { "circle-radius": 13, "circle-color": "#101918" },
-        });
-        m.addLayer({
-          id: "highlight",
-          type: "circle",
-          source: "selected-points",
-          paint: {
-            "circle-radius": 9,
-            "circle-color": "#ffffff",
-            "circle-stroke-color": "#edd79a",
-            "circle-stroke-width": 3,
-          },
-        });
         m.on("click", "municipalities", (e) => {
-          if (
-            m.queryRenderedFeatures(e.point, {
-              layers: ["pins", "clusters", "highlight"],
-            }).length
-          )
-            return;
           const id = String(e.features?.[0]?.properties?.codarea ?? "");
           if (id) current.current.onCity(id);
         });
@@ -243,47 +174,6 @@ export default function MapView(props: Props) {
         });
         m.on("mouseleave", "municipalities", clearHover);
         m.on("movestart", clearHover);
-        m.on("click", "pins", (e) => {
-          const features = m.queryRenderedFeatures(e.point, {
-            layers: ["pins"],
-          });
-          const candidates = [
-            ...new globalThis.Map(
-              features.map((f) => [
-                String(f.properties.id),
-                {
-                  ...f.properties,
-                  lng: (f.geometry as { coordinates: number[] }).coordinates[0],
-                  lat: (f.geometry as { coordinates: number[] }).coordinates[1],
-                } as Point,
-              ]),
-            ).values(),
-          ];
-          if (candidates.length > 1) setChoices(candidates);
-          else if (candidates[0]) current.current.onWork(candidates[0].id);
-        });
-        m.on("click", "clusters", async (e) => {
-          const p = e.features?.[0]?.properties;
-          if (!p) return;
-          const source = m.getSource("points") as GeoJSONSource;
-          const leaves = await source.getClusterLeaves(
-            Number(p.cluster_id),
-            10000,
-            0,
-          );
-          setChoices([
-            ...new Map(
-              leaves.map((f) => [
-                String(f.properties!.id),
-                {
-                  ...f.properties,
-                  lng: (f.geometry as { coordinates: number[] }).coordinates[0],
-                  lat: (f.geometry as { coordinates: number[] }).coordinates[1],
-                } as Point,
-              ]),
-            ).values(),
-          ]);
-        });
         m.on("moveend", () => {
           const p = new URLSearchParams(window.location.search),
             c = m.getCenter();
@@ -316,14 +206,7 @@ export default function MapView(props: Props) {
   }, [geo]);
   useEffect(() => {
     const m = map.current;
-    if (
-      !ready ||
-      !m ||
-      !geo ||
-      !m.getSource("municipalities") ||
-      !m.getSource("points")
-    )
-      return;
+    if (!ready || !m || !geo || !m.getSource("municipalities")) return;
     const features = geo.features.map((f) => ({
       ...f,
       properties: {
@@ -344,24 +227,6 @@ export default function MapView(props: Props) {
     );
     for (const layer of ["selection-casing", "selected"])
       m.setFilter(layer, ["==", ["get", "codarea"], props.city]);
-    (m.getSource("points") as GeoJSONSource).setData({
-      type: "FeatureCollection",
-      features: props.points.map((p) => ({
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [p.lng, p.lat] },
-        properties: { id: p.id, name: p.name, status: p.status },
-      })),
-    });
-    (m.getSource("selected-points") as GeoJSONSource).setData({
-      type: "FeatureCollection",
-      features: props.points
-        .filter((p) => p.id === props.work)
-        .map((p) => ({
-          type: "Feature",
-          geometry: { type: "Point", coordinates: [p.lng, p.lat] },
-          properties: { id: p.id },
-        })),
-    });
     const focus = props.city + "|" + props.camera;
     if (lastFocus.current !== focus) {
       lastFocus.current = focus;
@@ -403,12 +268,24 @@ export default function MapView(props: Props) {
     props.camera,
   ]);
   return (
-    <div className="map-surface" data-rendered={rendered || fallback}>
+    <div
+      className={`map-surface${props.city ? " has-city" : ""}`}
+      data-rendered={rendered || fallback}
+    >
       <div
         className="map-canvas"
         ref={container}
         aria-label="Mapa interativo dos municípios do Piauí"
       />
+      {ready && map.current && !fallback && (
+        <MapWorkMarkers
+          map={map.current}
+          points={props.points}
+          work={props.work}
+          onWork={props.onWork}
+          onGroup={setChoices}
+        />
+      )}
       {fallback && geo && (
         <svg
           className="fallback-map"
@@ -525,12 +402,14 @@ export default function MapView(props: Props) {
               Município selecionado
             </span>
             <span>
-              <i className="legend-point" />
+              <WorkIcon size={13} />
               Obras com localização
             </span>
             {props.work && props.points.some((p) => p.id === props.work) && (
               <span>
-                <i className="legend-work" />
+                <span className="legend-active-marker">
+                  <WorkIcon size={13} />
+                </span>
                 Obra aberta
               </span>
             )}
@@ -574,8 +453,15 @@ export default function MapView(props: Props) {
                 setChoices([]);
               }}
             >
-              {p.name}
-              <small>{p.id}</small>
+              <span className="choice-icon">
+                <WorkIcon name={p.name} size={22} />
+              </span>
+              <span className="choice-content">
+                {p.name}
+                <small>
+                  {p.status} � {p.id}
+                </small>
+              </span>
             </button>
           ))}
         </div>
