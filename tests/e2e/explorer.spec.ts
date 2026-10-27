@@ -19,7 +19,15 @@ test("fontes reais, filtros e permissões públicas", async ({ request }) => {
   ).json();
   expect(f.totals.count).toBe(f.counts["2211001"]);
   expect(f.items.every((w: any) => w.status === "Em execução")).toBe(true);
-  expect((await request.get("/api/admin")).status()).toBe(401);
+  const admin = await request.get("/api/admin");
+  if (admin.status() === 503) {
+    // CI deliberately runs the public snapshot without Supabase credentials.
+    expect(await admin.json()).toEqual({
+      error: "Integração administrativa ainda não configurada.",
+    });
+  } else {
+    expect(admin.status()).toBe(401);
+  }
   expect(
     (
       await request.post("/api/admin", {
