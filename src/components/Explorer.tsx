@@ -782,7 +782,16 @@ export default function Explorer() {
         </aside>
       </div>
       <footer className="bottom-bar">
-        <span>Obras públicas. Informação acessível.</span>
+        <a
+          className="creator-credit"
+          href="https://www.linkedin.com/in/glauber-giordano/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Criado por Glauber Giordano. Abrir LinkedIn em nova aba"
+        >
+          Criado por <strong>Glauber Giordano</strong>
+          <ArrowUpRight size={12} aria-hidden="true" />
+        </a>
         <span>
           Fontes verificáveis <Check size={12} />
         </span>
@@ -823,6 +832,19 @@ export default function Explorer() {
               atendem o Piauí. A cobertura depende do cadastro nas fontes
               integradas e não representa todas as obras existentes.
             </p>
+            <h2>Quem criou</h2>
+            <p>
+              Projeto criado por Glauber Giordano para facilitar a consulta de
+              informações públicas sobre obras que atendem o Piauí.
+            </p>
+            <a
+              className="source-link"
+              href="https://www.linkedin.com/in/glauber-giordano/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Conheça o criador no LinkedIn <ArrowUpRight size={14} />
+            </a>
             <h2>O que está nesta consulta</h2>
             <dl className="metadata-list">
               <div>

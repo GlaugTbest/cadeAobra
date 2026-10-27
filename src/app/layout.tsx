@@ -3,6 +3,12 @@ import "./globals.css";
 import AuthRedirect from "@/components/AuthRedirect";
 export const metadata: Metadata = {
   metadataBase: new URL("https://cade-a-obra.vercel.app"),
+  authors: [
+    {
+      name: "Glauber Giordano",
+      url: "https://www.linkedin.com/in/glauber-giordano/",
+    },
+  ],
   title: "Cadê a Obra? | Obras públicas do Piauí",
   description:
     "Encontre obras públicas no Piauí. Consulte investimentos previstos, situação oficial e agentes com fontes verificáveis.",

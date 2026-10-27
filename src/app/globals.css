@@ -975,6 +975,23 @@ select {
   font-size: 9px;
   padding: 0;
 }
+.creator-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.creator-credit strong {
+  font-weight: 600;
+  color: var(--green);
+}
+.creator-credit:hover strong {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .mobile-handle {
   display: none;
 }
@@ -1719,10 +1736,14 @@ progress::-webkit-progress-value {
     display: none !important;
   }
   .bottom-bar {
-    height: 26px;
-    min-height: 26px;
+    height: 44px;
+    min-height: 44px;
     padding: 0 14px;
     font-size: 8px;
+  }
+  .creator-credit {
+    min-height: 44px;
+    font-size: 10px;
   }
   .bottom-bar span:nth-child(2) {
     display: none;
