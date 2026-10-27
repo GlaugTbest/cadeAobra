@@ -1,0 +1,18 @@
+{
+  "consultedAt": "2026-10-27T12:32:35.248Z",
+  "sourceUpdatedAt": "2026-10-27T00:00:00",
+  "municipalitiesSource": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/22/municipios",
+  "geometrySource": "https://servicodados.ibge.gov.br/api/v3/malhas/estados/22",
+  "geometrySha256": "c00ced4a2ad606a8fdda069c8e3a28f43152e7d355ef7d08baa0dc8a500ed5e5",
+  "coverage": {
+    "complete": true,
+    "works": 6442,
+    "municipalities": 224,
+    "geometryAssociations": 13877,
+    "outsidePrimaryUf": 11,
+    "withoutMunicipality": 12,
+    "withoutCoordinates": 602,
+    "excludedNonWorks": 137,
+    "enrichmentRequests": 24
+  }
+}

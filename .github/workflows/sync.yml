@@ -1,0 +1,44 @@
+name: Atualizar dados oficiais
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: official-data-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 40
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SYNC_REQUEST_BUDGET: '400'
+      SYNC_MAX_MINUTES: '30'
+      ENRICH_REQUEST_BUDGET: '24'
+      SNAPSHOT_RETENTION: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: data/checkpoints
+          key: official-pages-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: official-pages-
+      - run: npm run sync
+      - run: npm run seed
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sincronizacao-${{ github.run_id }}
+          path: data/checkpoints/*/run.json
+          retention-days: 14
+      - run: echo 'Falha na atualização. Última base válida preservada. Consulte os logs e execute o workflow manualmente.' >> "$GITHUB_STEP_SUMMARY"
+        if: failure()

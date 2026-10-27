@@ -1,0 +1,43 @@
+{
+  "name": "cade-a-obra",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/prepare-assets.mjs",
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "sync": "tsx --env-file-if-exists=.env.local scripts/sync.ts",
+    "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "bootstrap:admin": "tsx --env-file-if-exists=.env.local scripts/bootstrap-admin.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "5.3.0",
+    "@fontsource-variable/manrope": "5.3.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "@turf/boolean-point-in-polygon": "7.3.1",
+    "lucide-react": "0.468.0",
+    "maplibre-gl": "6.16.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "@playwright/test": "1.58.2",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/geojson": "7946.0.16",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "tailwindcss": "4.1.18",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
+  }
+}

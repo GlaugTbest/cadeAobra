@@ -1,0 +1,326 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T13:25:22.642Z",
+  "title": "Design System: Cadê a Obra?",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Carvão esverdeado",
+        "tonalRamp": [
+          "oklch(15.00% 0.0134 187.69)",
+          "oklch(26.43% 0.0134 187.69)",
+          "oklch(37.86% 0.0134 187.69)",
+          "oklch(49.29% 0.0134 187.69)",
+          "oklch(60.71% 0.0134 187.69)",
+          "oklch(72.14% 0.0134 187.69)",
+          "oklch(83.57% 0.0134 187.69)",
+          "oklch(95.00% 0.0134 187.69)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Verde de painel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0153 174.70)",
+          "oklch(26.43% 0.0153 174.70)",
+          "oklch(37.86% 0.0153 174.70)",
+          "oklch(49.29% 0.0153 174.70)",
+          "oklch(60.71% 0.0153 174.70)",
+          "oklch(72.14% 0.0153 174.70)",
+          "oklch(83.57% 0.0153 174.70)",
+          "oklch(95.00% 0.0153 174.70)"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divisória vegetal",
+        "tonalRamp": [
+          "oklch(15.00% 0.0228 159.98)",
+          "oklch(26.43% 0.0228 159.98)",
+          "oklch(37.86% 0.0228 159.98)",
+          "oklch(49.29% 0.0228 159.98)",
+          "oklch(60.71% 0.0228 159.98)",
+          "oklch(72.14% 0.0228 159.98)",
+          "oklch(83.57% 0.0228 159.98)",
+          "oklch(95.00% 0.0228 159.98)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Marfim",
+        "tonalRamp": [
+          "oklch(15.00% 0.0106 112.37)",
+          "oklch(26.43% 0.0106 112.37)",
+          "oklch(37.86% 0.0106 112.37)",
+          "oklch(49.29% 0.0106 112.37)",
+          "oklch(60.71% 0.0106 112.37)",
+          "oklch(72.14% 0.0106 112.37)",
+          "oklch(83.57% 0.0106 112.37)",
+          "oklch(95.00% 0.0106 112.37)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Sálvia",
+        "tonalRamp": [
+          "oklch(15.00% 0.0231 145.35)",
+          "oklch(26.43% 0.0231 145.35)",
+          "oklch(37.86% 0.0231 145.35)",
+          "oklch(49.29% 0.0231 145.35)",
+          "oklch(60.71% 0.0231 145.35)",
+          "oklch(72.14% 0.0231 145.35)",
+          "oklch(83.57% 0.0231 145.35)",
+          "oklch(95.00% 0.0231 145.35)"
+        ]
+      },
+      "selection": {
+        "role": "primary",
+        "displayName": "Amarelo cálido",
+        "tonalRamp": [
+          "oklch(15.00% 0.0819 90.52)",
+          "oklch(26.43% 0.0819 90.52)",
+          "oklch(37.86% 0.0819 90.52)",
+          "oklch(49.29% 0.0819 90.52)",
+          "oklch(60.71% 0.0819 90.52)",
+          "oklch(72.14% 0.0819 90.52)",
+          "oklch(83.57% 0.0819 90.52)",
+          "oklch(95.00% 0.0819 90.52)"
+        ]
+      },
+      "map-zero": {
+        "role": "primary",
+        "displayName": "Verde cartográfico — 0",
+        "tonalRamp": [
+          "oklch(15.00% 0.0237 169.70)",
+          "oklch(26.43% 0.0237 169.70)",
+          "oklch(37.86% 0.0237 169.70)",
+          "oklch(49.29% 0.0237 169.70)",
+          "oklch(60.71% 0.0237 169.70)",
+          "oklch(72.14% 0.0237 169.70)",
+          "oklch(83.57% 0.0237 169.70)",
+          "oklch(95.00% 0.0237 169.70)"
+        ]
+      },
+      "map-one": {
+        "role": "primary",
+        "displayName": "Verde cartográfico — 1",
+        "tonalRamp": [
+          "oklch(15.00% 0.0549 166.82)",
+          "oklch(26.43% 0.0549 166.82)",
+          "oklch(37.86% 0.0549 166.82)",
+          "oklch(49.29% 0.0549 166.82)",
+          "oklch(60.71% 0.0549 166.82)",
+          "oklch(72.14% 0.0549 166.82)",
+          "oklch(83.57% 0.0549 166.82)",
+          "oklch(95.00% 0.0549 166.82)"
+        ]
+      },
+      "map-twenty": {
+        "role": "primary",
+        "displayName": "Verde cartográfico — 20",
+        "tonalRamp": [
+          "oklch(15.00% 0.0806 161.58)",
+          "oklch(26.43% 0.0806 161.58)",
+          "oklch(37.86% 0.0806 161.58)",
+          "oklch(49.29% 0.0806 161.58)",
+          "oklch(60.71% 0.0806 161.58)",
+          "oklch(72.14% 0.0806 161.58)",
+          "oklch(83.57% 0.0806 161.58)",
+          "oklch(95.00% 0.0806 161.58)"
+        ]
+      },
+      "map-hundred": {
+        "role": "primary",
+        "displayName": "Verde cartográfico — 100",
+        "tonalRamp": [
+          "oklch(15.00% 0.0977 153.46)",
+          "oklch(26.43% 0.0977 153.46)",
+          "oklch(37.86% 0.0977 153.46)",
+          "oklch(49.29% 0.0977 153.46)",
+          "oklch(60.71% 0.0977 153.46)",
+          "oklch(72.14% 0.0977 153.46)",
+          "oklch(83.57% 0.0977 153.46)",
+          "oklch(95.00% 0.0977 153.46)"
+        ]
+      },
+      "map-five-hundred": {
+        "role": "primary",
+        "displayName": "Verde cartográfico — 500+",
+        "tonalRamp": [
+          "oklch(15.00% 0.0766 133.36)",
+          "oklch(26.43% 0.0766 133.36)",
+          "oklch(37.86% 0.0766 133.36)",
+          "oklch(49.29% 0.0766 133.36)",
+          "oklch(60.71% 0.0766 133.36)",
+          "oklch(72.14% 0.0766 133.36)",
+          "oklch(83.57% 0.0766 133.36)",
+          "oklch(95.00% 0.0766 133.36)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Título do recorte",
+        "purpose": "Município ou estado no painel."
+      },
+      "metric": {
+        "displayName": "Indicador",
+        "purpose": "Contagens e investimento previsto, com algarismos tabulares."
+      },
+      "body": {
+        "displayName": "Leitura",
+        "purpose": "Base de texto da aplicação."
+      },
+      "work-title": {
+        "displayName": "Título da obra",
+        "purpose": "Leitura de resultados na lista."
+      },
+      "supporting": {
+        "displayName": "Apoio público",
+        "purpose": "Rótulos dos indicadores e filtros, situação, metadados da lista e ressalva financeira."
+      }
+    },
+    "shadows": [
+      {
+        "name": "search-results",
+        "value": "0 20px 40px #0006",
+        "purpose": "Sugestões acima da superfície principal."
+      },
+      {
+        "name": "point-choices",
+        "value": "0 15px 40px #0005",
+        "purpose": "Lista de obras agrupadas no mapa."
+      },
+      {
+        "name": "mobile-panel",
+        "value": "0 -10px 30px #0003",
+        "purpose": "Separa o painel inferior do mapa."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 25px #0005",
+        "purpose": "Confirmação temporária de compartilhamento."
+      },
+      {
+        "name": "about-panel",
+        "value": "-15px 0 45px #0005",
+        "purpose": "Painel lateral de informações sobre os dados."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background-color .15s, color .15s",
+        "purpose": "Retorno discreto de interação."
+      },
+      {
+        "name": "map-fit",
+        "value": "650ms",
+        "purpose": "Enquadramento do recorte; duração zero com movimento reduzido."
+      },
+      {
+        "name": "mobile-height",
+        "value": "none",
+        "purpose": "Mudança imediata de área livre e reenquadramento do mapa."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "700px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1050px"
+      },
+      {
+        "name": "wide-desktop",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Busca",
+      "kind": "input",
+      "refersTo": "search",
+      "description": "Entrada persistente para cidade, obra ou agente.",
+      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input aria-label=\"Busque sua cidade, obra ou agente\" placeholder=\"Busque sua cidade, obra ou agente\"><kbd>/</kbd></label>",
+      "css": ".ds-search{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:flex;align-items:center;gap:10px;height:48px;padding:0 13px;border:1px solid #58644e;border-radius:7px;background:#243027;color:var(--muted,#b0bdb0)}.ds-search input{font-family:var(--font-body,'DM Sans Variable',sans-serif);min-width:0;flex:1;border:0;background:none;color:var(--text,#f0f1e9);font-size:13px}.ds-search input::placeholder{color:#c2cbb9}.ds-search kbd{border:1px solid #63745d;border-radius:3px;line-height:20px;width:20px;text-align:center;font-size:10px}.ds-search:focus-within{border-color:var(--accent,#edd79a)}.ds-search input:focus{outline:none}.ds-search:hover{border-color:#82906f}"
+    },
+    {
+      "name": "Filtro",
+      "kind": "input",
+      "refersTo": "filter",
+      "description": "Seletor nativo com rótulo visível.",
+      "html": "<label class=\"ds-filter\">Situação oficial<select><option>Todas as situações</option><option>Em execução</option></select></label>",
+      "css": ".ds-filter{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:flex;flex-direction:column;gap:6px;color:var(--muted,#b0bdb0);font-size:12px}.ds-filter select{font-family:var(--font-body,'DM Sans Variable',sans-serif);padding:10px 22px 10px 9px;border:1px solid #465442;border-radius:5px;background:#1d2921;color:#e2e8da;font-size:12px}.ds-filter select:hover{border-color:#82906f}.ds-filter select:focus-visible{outline:2px solid var(--accent,#edd79a);outline-offset:4px}"
+    },
+    {
+      "name": "Abas de resultados",
+      "kind": "nav",
+      "description": "Lista de obras e alternativa municipal ao mapa.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"Exibição de resultados\"><button class=\"ds-tab ds-active\" role=\"tab\" aria-selected=\"true\">Obras <span>6.442</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Municípios <span>224</span></button></div>",
+      "css": ".ds-tabs{display:flex;gap:24px;border-bottom:1px solid var(--line,#34423a)}.ds-tab{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:flex;gap:7px;align-items:center;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted,#b0bdb0);font-size:13px;padding:0 0 12px;cursor:pointer}.ds-tab.ds-active{border-bottom-color:var(--accent,#edd79a);color:var(--text,#f0f1e9)}.ds-tab span{background:#31402f;padding:1px 5px;border-radius:3px;color:#bfd0b8;font-size:9px;font-variant-numeric:tabular-nums}.ds-tab:hover{color:var(--accent,#edd79a)}.ds-tab:focus-visible{outline:2px solid var(--accent,#edd79a);outline-offset:4px}"
+    },
+    {
+      "name": "Situação oficial",
+      "kind": "chip",
+      "description": "Estado textual com ponto de cor, sem aparência de ação.",
+      "html": "<span class=\"ds-status\"><i></i>Cadastrada</span>",
+      "css": ".ds-status{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#c2c8b3;white-space:nowrap}.ds-status i{display:block;width:5px;height:5px;border-radius:50%;background:currentColor}"
+    },
+    {
+      "name": "Linha de obra",
+      "kind": "custom",
+      "description": "Resultado inteiro clicável, separado por linha fina.",
+      "html": "<button class=\"ds-work\"><span class=\"ds-work-meta\">Cadastrada <span>Rodoviário</span></span><strong>Adequação de estradas vicinais no município</strong><span class=\"ds-work-bottom\">Não informado <span>Sem ponto preciso</span></span></button>",
+      "css": ".ds-work{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:block;text-align:left;width:100%;padding:22px 24px 20px;background:var(--panel,#192320);border:0;border-bottom:1px solid var(--line,#34423a);color:var(--text,#f0f1e9);cursor:pointer}.ds-work-meta,.ds-work-bottom{display:flex;justify-content:space-between;gap:12px;color:var(--muted,#b0bdb0);font-size:12px}.ds-work strong{display:block;max-width:35ch;font-size:14px;font-weight:550;line-height:1.65;margin-top:10px}.ds-work-bottom{margin-top:14px;font-variant-numeric:tabular-nums}.ds-work:hover{background:#222f25;color:var(--accent,#edd79a)}.ds-work:focus-visible{outline:2px solid var(--accent,#edd79a);outline-offset:4px}"
+    },
+    {
+      "name": "Controle móvel do mapa",
+      "kind": "button",
+      "refersTo": "map-control-mobile",
+      "description": "Alvo de toque de 44px para aproximar o mapa.",
+      "html": "<button class=\"ds-map-control\" aria-label=\"Aproximar mapa\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></button>",
+      "css": ".ds-map-control{display:grid;place-items:center;width:44px;height:44px;background:#1b2621;color:var(--text,#f0f1e9);border:1px solid var(--line,#34423a);border-radius:7px;cursor:pointer;transition:background-color .15s,color .15s}.ds-map-control:hover{background:#2b3b2c;color:var(--accent,#edd79a)}.ds-map-control:focus-visible{outline:2px solid var(--accent,#edd79a);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-map-control{transition:none}}"
+    },
+    {
+      "name": "Alça do painel móvel",
+      "kind": "button",
+      "refersTo": "mobile-handle",
+      "description": "Entrada compacta para abrir a lista de resultados.",
+      "html": "<button class=\"ds-handle\" aria-expanded=\"false\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m6 15 6-6 6 6\"/></svg><span>6.442 obras · ver lista</span></button>",
+      "css": ".ds-handle{font-family:var(--font-body,'DM Sans Variable',sans-serif);display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;width:100%;background:var(--panel,#192320);color:var(--muted,#b0bdb0);font-size:12px;border:0;border-top:1px solid #6b795c;border-radius:16px 16px 0 0;cursor:pointer}.ds-handle:hover{color:var(--accent,#edd79a)}.ds-handle:focus-visible{outline:2px solid var(--accent,#edd79a);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Atlas público",
+    "overview": "Consulta imediata em um mapa escuro. A cartografia real dos municípios do IBGE ocupa a superfície principal; busca, lista e fichas organizam a leitura sem transformar a interface em uma coleção de cartões. A identidade é sóbria, pública e sem estética eleitoral.",
+    "keyCharacteristics": [
+      "Mapa como ponto de entrada, com lista equivalente.",
+      "Verde sequencial para quantidade; amarelo cálido para seleção e destaque.",
+      "Painéis opacos, divisórias finas e informação literal."
+    ],
+    "rules": [
+      {
+        "name": "The Cartographic Meaning Rule",
+        "body": "Cor geográfica representa quantidade ou seleção; situação oficial sempre aparece também em texto.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "**Do** manter mapa, busca e lista como caminhos equivalentes de consulta.",
+      "**Do** preservar a rampa sequencial e a legenda ao representar quantidades.",
+      "**Do** reenquadrar a cartografia no espaço realmente livre do painel móvel.",
+      "**Do** manter texto legível para situação, previsão financeira e ausência de dados."
+    ],
+    "donts": [
+      "**Don't** substituir a cartografia real por ilustração demonstrativa.",
+      "**Don't** usar estética eleitoral, cores partidárias ou fotografias inventadas.",
+      "**Don't** transformar cada linha de resultado em cartão decorativo.",
+      "**Don't** representar uma obra sem coordenadas por um ponto inventado no centro do município."
+    ]
+  }
+}

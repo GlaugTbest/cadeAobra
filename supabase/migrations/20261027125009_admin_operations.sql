@@ -1,0 +1,13 @@
+drop policy admin_agents on public.agents;
+create policy admin_agents on public.agents for all to authenticated using(private.is_admin() and not official) with check(private.is_admin() and not official);
+create function public.admin_history() returns setof private.audit_log language sql stable security invoker set search_path='' as $$select * from private.audit_log order by id desc limit 100$$;
+revoke all on function public.admin_history() from public;
+grant execute on function public.admin_history() to authenticated;
+create function public.record_sync_run(run_state text,run_details jsonb) returns void language sql security invoker set search_path='' as $$insert into private.sync_runs(state,finished_at,details) values(run_state,now(),run_details)$$;
+revoke all on function public.record_sync_run(text,jsonb) from public;
+grant execute on function public.record_sync_run(text,jsonb) to service_role;
+create function public.admin_sync_runs() returns setof private.sync_runs language sql stable security invoker set search_path='' as $$select * from private.sync_runs order by started_at desc limit 50$$;
+revoke all on function public.admin_sync_runs() from public;
+grant execute on function public.admin_sync_runs() to authenticated;
+revoke all on function private.validate_publication() from public;
+revoke all on function private.lock_evidence() from public;

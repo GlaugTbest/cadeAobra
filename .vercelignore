@@ -1,0 +1,10 @@
+.env*
+!.env.example
+.git
+.impeccable
+data/raw
+data/checkpoints
+data/test-browser
+test-results
+playwright-report
+docs/research
