@@ -25,4 +25,10 @@ O convite do primeiro administrador foi enviado ao e-mail solicitado e o usuári
 
 O workflow diário está preparado, mas precisa de secrets `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` no environment protegido `production` do GitHub. Essa chave de serviço não foi exposta nem adicionada ao repositório. Configure notificações de falha do Actions. Antes de usar links de recuperação/convite em produção, configure a URL pública e redirecionamentos no Supabase Auth.
 
-O estado confirmado de publicação será registrado abaixo após o deploy e os testes públicos.
+## Publicação confirmada
+
+Site público: https://cade-a-obra.vercel.app. Código enviado a https://github.com/GlaugTbest/cadeAobra. Projeto Vercel Hobby ligado ao GitHub. A primeira publicação retornou 200 na página inicial e em `/admin`, 6.442 obras na consulta pública e 401 na API administrativa sem login. Os seis fluxos E2E também passaram na URL pública.
+
+## Refinamento do mapa
+
+Hover com borda branca e base escura, rampa sequencial com seis marcos, município selecionado em jade/dourado e demais municípios discretos e clicáveis. Legenda contextual opaca distingue cidades e pontos. A revisão Impeccable encontrou e levou à correção do destaque de obra dentro de agrupamentos: a obra aberta agora usa fonte geográfica separada, sem cluster, com centro branco. Verificados visão estadual, hover, Floriano selecionado, vizinho sob o mouse e ficha de obra em desktop e celular. Build e 15 testes passaram; os seis fluxos E2E passaram no build com o refinamento. Revisão final Impeccable: Ship neste escopo, com afastamento entre legenda e texto do mapa aplicado.

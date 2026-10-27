@@ -8,11 +8,15 @@ colors:
   text: "#f0f1e9"
   muted: "#b0bdb0"
   selection: "#edd79a"
-  map-zero: "#263630"
-  map-one: "#295343"
-  map-twenty: "#357457"
-  map-hundred: "#64a87a"
-  map-five-hundred: "#b6d5a2"
+  map-zero: "#263632"
+  map-one: "#225c53"
+  map-five: "#338775"
+  map-twenty: "#68ac83"
+  map-hundred: "#a8cf95"
+  map-five-hundred: "#dee9b6"
+  map-selected: "#367c6b"
+  map-context: "#273a34"
+  map-hover: "#ffffff"
 typography:
   title:
     fontFamily: "Manrope Variable, sans-serif"
@@ -89,8 +93,10 @@ Consulta imediata em um mapa escuro. A cartografia real dos municípios do IBGE 
 
 ### Primary
 
-- **Verdes cartográficos:** rampa sequencial aplicada à quantidade de obras únicas no recorte, com marcos em 0, 1, 20, 100 e 500+. A legenda acompanha o mapa.
+- **Verdes cartográficos:** rampa sequencial de petróleo a jade e sálvia aplicada à quantidade de obras únicas no recorte, com marcos em 0, 1, 5, 20, 100 e 500+. A legenda acompanha o mapa.
 - **Amarelo cálido:** contorno do município selecionado, pontos de obras, valores destacados, aba ativa e foco.
+- **Branco:** borda do município sob o mouse e centro dos pontos da obra aberta. Contornos escuros preservam a leitura sobre preenchimentos claros.
+- **Contexto municipal:** ao selecionar uma cidade, ela recebe verde jade e contorno dourado; os demais municípios ficam em verde discreto e continuam clicáveis. A legenda passa a explicar seleção, pontos e contexto, sem sugerir que os vizinhos têm zero obras. A obra aberta tem uma camada própria sem agrupamento. A legenda usa uma superfície opaca para manter contraste no celular.
 
 ### Neutral
 

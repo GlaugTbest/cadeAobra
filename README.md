@@ -1,5 +1,7 @@
 # Cadê a Obra?
 
+[Abrir o site](https://cade-a-obra.vercel.app)
+
 Aplicação pública para consultar obras que atendem o Piauí, investimentos previstos e agentes relacionados com fontes verificáveis. A entrada é diretamente no mapa, sem cadastro público.
 
 ## Executar

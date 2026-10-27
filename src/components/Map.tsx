@@ -25,6 +25,14 @@ type Props = {
 const stateBounds: [number, number, number, number] = [
   -46.05, -10.95, -40.3, -2.65,
 ];
+const mapScale = [
+  [0, "#263632"],
+  [1, "#225c53"],
+  [5, "#338775"],
+  [20, "#68ac83"],
+  [100, "#a8cf95"],
+  [500, "#dee9b6"],
+] as const;
 export default function MapView(props: Props) {
   const container = useRef<HTMLDivElement>(null),
     map = useRef<GLMap | null>(null),
@@ -39,7 +47,7 @@ export default function MapView(props: Props) {
     [rendered, setRendered] = useState(false),
     [fallback, setFallback] = useState(false),
     [choices, setChoices] = useState<Point[]>([]),
-    [hover, setHover] = useState("");
+    [hover, setHover] = useState({ id: "", name: "" });
   useEffect(() => {
     const c = new AbortController();
     fetch("/data/piaui.geojson", { signal: c.signal })
@@ -120,12 +128,31 @@ export default function MapView(props: Props) {
           paint: { "line-color": "#111e1a", "line-width": 0.9 },
         });
         m.addLayer({
+          id: "selection-casing",
+          type: "line",
+          source: "municipalities",
+          filter: ["==", ["get", "codarea"], ""],
+          paint: { "line-color": "#101918", "line-width": 7 },
+        });
+        m.addLayer({
           id: "selected",
           type: "line",
           source: "municipalities",
           filter: ["==", ["get", "codarea"], ""],
-          paint: { "line-color": "#edd79a", "line-width": 2.5 },
+          paint: { "line-color": "#edd79a", "line-width": 4 },
         });
+        for (const [id, color, width] of [
+          ["hover-casing", "#101918", 5],
+          ["hover-border", "#ffffff", 2],
+        ] as const) {
+          m.addLayer({
+            id,
+            type: "line",
+            source: "municipalities",
+            filter: ["==", ["get", "codarea"], ""],
+            paint: { "line-color": color, "line-width": width },
+          });
+        }
         m.addSource("points", {
           type: "geojson",
           data: { type: "FeatureCollection", features: [] },
@@ -165,35 +192,57 @@ export default function MapView(props: Props) {
             "circle-stroke-width": 2,
           },
         });
+        m.addSource("selected-points", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+        m.addLayer({
+          id: "highlight-casing",
+          type: "circle",
+          source: "selected-points",
+          paint: { "circle-radius": 13, "circle-color": "#101918" },
+        });
         m.addLayer({
           id: "highlight",
           type: "circle",
-          source: "points",
-          filter: ["==", ["get", "id"], ""],
+          source: "selected-points",
           paint: {
-            "circle-radius": 10,
-            "circle-color": "#fff2c7",
-            "circle-stroke-color": "#bb9350",
+            "circle-radius": 9,
+            "circle-color": "#ffffff",
+            "circle-stroke-color": "#edd79a",
             "circle-stroke-width": 3,
           },
         });
         m.on("click", "municipalities", (e) => {
           if (
-            m.queryRenderedFeatures(e.point, { layers: ["pins", "clusters"] })
-              .length
+            m.queryRenderedFeatures(e.point, {
+              layers: ["pins", "clusters", "highlight"],
+            }).length
           )
             return;
           const id = String(e.features?.[0]?.properties?.codarea ?? "");
           if (id) current.current.onCity(id);
         });
+        let hoveredId = "";
+        const clearHover = () => {
+          hoveredId = "";
+          m.setFilter("hover-casing", ["==", ["get", "codarea"], ""]);
+          m.setFilter("hover-border", ["==", ["get", "codarea"], ""]);
+          m.getCanvas().style.cursor = "";
+          setHover({ id: "", name: "" });
+        };
         m.on("mousemove", "municipalities", (e) => {
           m.getCanvas().style.cursor = "pointer";
-          setHover(String(e.features?.[0]?.properties?.name ?? ""));
+          const properties = e.features?.[0]?.properties;
+          const id = String(properties?.codarea ?? "");
+          if (id === hoveredId) return;
+          hoveredId = id;
+          for (const layer of ["hover-casing", "hover-border"])
+            m.setFilter(layer, ["==", ["get", "codarea"], id]);
+          setHover({ id, name: String(properties?.name ?? "") });
         });
-        m.on("mouseleave", "municipalities", () => {
-          m.getCanvas().style.cursor = "";
-          setHover("");
-        });
+        m.on("mouseleave", "municipalities", clearHover);
+        m.on("movestart", clearHover);
         m.on("click", "pins", (e) => {
           const features = m.queryRenderedFeatures(e.point, {
             layers: ["pins"],
@@ -286,22 +335,15 @@ export default function MapView(props: Props) {
       type: "FeatureCollection",
       features,
     });
-    m.setPaintProperty("municipalities", "fill-color", [
-      "interpolate",
-      ["linear"],
-      ["get", "count"],
-      0,
-      "#263630",
-      1,
-      "#295343",
-      20,
-      "#357457",
-      100,
-      "#64a87a",
-      500,
-      "#b6d5a2",
-    ]);
-    m.setFilter("selected", ["==", ["get", "codarea"], props.city]);
+    m.setPaintProperty(
+      "municipalities",
+      "fill-color",
+      props.city
+        ? ["case", ["==", ["get", "codarea"], props.city], "#367c6b", "#273a34"]
+        : ["interpolate", ["linear"], ["get", "count"], ...mapScale.flat()],
+    );
+    for (const layer of ["selection-casing", "selected"])
+      m.setFilter(layer, ["==", ["get", "codarea"], props.city]);
     (m.getSource("points") as GeoJSONSource).setData({
       type: "FeatureCollection",
       features: props.points.map((p) => ({
@@ -310,7 +352,16 @@ export default function MapView(props: Props) {
         properties: { id: p.id, name: p.name, status: p.status },
       })),
     });
-    m.setFilter("highlight", ["==", ["get", "id"], props.work]);
+    (m.getSource("selected-points") as GeoJSONSource).setData({
+      type: "FeatureCollection",
+      features: props.points
+        .filter((p) => p.id === props.work)
+        .map((p) => ({
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [p.lng, p.lat] },
+          properties: { id: p.id },
+        })),
+    });
     const focus = props.city + "|" + props.camera;
     if (lastFocus.current !== focus) {
       lastFocus.current = focus;
@@ -364,33 +415,63 @@ export default function MapView(props: Props) {
           viewBox="0 0 700 800"
           aria-label="Mapa municipal do Piauí"
         >
-          {geo.features.map((f) => (
-            <path
-              key={f.properties.codarea}
-              d={svgPath(f.geometry)}
-              fill={
-                props.city === String(f.properties.codarea)
-                  ? "#83ab7e"
-                  : "#315d47"
-              }
-              stroke={
-                props.city === String(f.properties.codarea)
-                  ? "#edd79a"
-                  : "#10231a"
-              }
-              strokeWidth={
-                props.city === String(f.properties.codarea) ? 2 : 0.7
-              }
-              role="button"
-              tabIndex={0}
-              aria-label={f.properties.name}
-              onClick={() => props.onCity(String(f.properties.codarea))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ")
-                  props.onCity(String(f.properties.codarea));
-              }}
-            />
-          ))}
+          {[...geo.features]
+            .sort(
+              (a, b) =>
+                Number(String(a.properties.codarea) === hover.id) -
+                Number(String(b.properties.codarea) === hover.id),
+            )
+            .map((f) => (
+              <path
+                key={f.properties.codarea}
+                d={svgPath(f.geometry)}
+                fill={
+                  props.city
+                    ? props.city === String(f.properties.codarea)
+                      ? "#367c6b"
+                      : "#273a34"
+                    : mapColor(props.counts[String(f.properties.codarea)] ?? 0)
+                }
+                stroke={
+                  hover.id === String(f.properties.codarea)
+                    ? "#ffffff"
+                    : props.city === String(f.properties.codarea)
+                      ? "#edd79a"
+                      : "#10231a"
+                }
+                strokeWidth={
+                  hover.id === String(f.properties.codarea) ||
+                  props.city === String(f.properties.codarea)
+                    ? 2
+                    : 0.7
+                }
+                role="button"
+                tabIndex={0}
+                aria-label={f.properties.name}
+                aria-pressed={props.city === String(f.properties.codarea)}
+                onMouseEnter={() =>
+                  setHover({
+                    id: String(f.properties.codarea),
+                    name: f.properties.name ?? "",
+                  })
+                }
+                onMouseLeave={() => setHover({ id: "", name: "" })}
+                onFocus={() =>
+                  setHover({
+                    id: String(f.properties.codarea),
+                    name: f.properties.name ?? "",
+                  })
+                }
+                onBlur={() => setHover({ id: "", name: "" })}
+                onClick={() => props.onCity(String(f.properties.codarea))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    props.onCity(String(f.properties.codarea));
+                  }
+                }}
+              />
+            ))}
         </svg>
       )}
       <div className="map-context">
@@ -399,7 +480,7 @@ export default function MapView(props: Props) {
         <span className="map-context-dot" />
         PI
       </div>
-      {hover && <div className="map-hover">{hover}</div>}
+      {hover.name && <div className="map-hover">{hover.name}</div>}
       <div className="map-controls">
         <button
           aria-label="Aproximar mapa"
@@ -422,7 +503,7 @@ export default function MapView(props: Props) {
           <LocateFixed size={19} />
         </button>
       </div>
-      <div className="map-caption">
+      <div className={`map-caption${props.city ? " has-selection" : ""}`}>
         <span className="map-state">
           {geo?.features.find(
             (f) => String(f.properties.codarea) === props.city,
@@ -437,21 +518,42 @@ export default function MapView(props: Props) {
         </p>
       </div>
       <div className="map-legend">
-        <span>Obras únicas no recorte</span>
-        <div className="legend-colors">
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="legend-labels">
-          <span>0</span>
-          <span>1</span>
-          <span>20</span>
-          <span>100</span>
-          <span>500+</span>
-        </div>
+        {props.city ? (
+          <div className="selection-legend">
+            <span>
+              <i className="legend-selected" />
+              Município selecionado
+            </span>
+            <span>
+              <i className="legend-point" />
+              Obras com localização
+            </span>
+            {props.work && props.points.some((p) => p.id === props.work) && (
+              <span>
+                <i className="legend-work" />
+                Obra aberta
+              </span>
+            )}
+            <span>
+              <i className="legend-context" />
+              Demais municípios
+            </span>
+          </div>
+        ) : (
+          <>
+            <span>Obras únicas no recorte</span>
+            <div className="legend-colors" aria-hidden="true">
+              {mapScale.map(([count, color]) => (
+                <i key={count} style={{ background: color }} />
+              ))}
+            </div>
+            <div className="legend-labels">
+              {mapScale.map(([count]) => (
+                <span key={count}>{count === 500 ? "500+" : count}</span>
+              ))}
+            </div>
+          </>
+        )}
       </div>
       {choices.length > 0 && (
         <div className="point-choices">
@@ -480,6 +582,27 @@ export default function MapView(props: Props) {
       )}
       {!geo && <span className="map-loading">Carregando malha do IBGE…</span>}
     </div>
+  );
+}
+function mapColor(count: number) {
+  const next = mapScale.findIndex(([stop]) => stop > count);
+  if (next < 0) return mapScale.at(-1)![1];
+  if (next === 0) return mapScale[0][1];
+  const [low, from] = mapScale[next - 1],
+    [high, to] = mapScale[next];
+  const ratio = (count - low) / (high - low);
+  return (
+    "#" +
+    [1, 3, 5]
+      .map((i) =>
+        Math.round(
+          parseInt(from.slice(i, i + 2), 16) * (1 - ratio) +
+            parseInt(to.slice(i, i + 2), 16) * ratio,
+        )
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")
   );
 }
 function geometryBounds(g: Geometry): [number, number, number, number] {

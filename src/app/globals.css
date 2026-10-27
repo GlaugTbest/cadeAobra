@@ -280,6 +280,9 @@ select {
   bottom: 124px;
   pointer-events: none;
 }
+.map-caption.has-selection {
+  bottom: 168px;
+}
 .map-state {
   font: 500 33px var(--font-title);
   color: #c1cdb9;
@@ -309,20 +312,43 @@ select {
 .legend-colors i {
   flex: 1;
 }
-.legend-colors i:nth-child(1) {
-  background: #263630;
+.selection-legend {
+  display: grid;
+  gap: 7px;
+  width: max-content;
+  max-width: 100%;
+  padding: 10px 12px;
+  background: #17231f;
+  color: #d1dace;
+  border-radius: 5px;
 }
-.legend-colors i:nth-child(2) {
-  background: #295343;
+.selection-legend span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.legend-colors i:nth-child(3) {
-  background: #357457;
+.selection-legend i {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
 }
-.legend-colors i:nth-child(4) {
-  background: #64a87a;
+.legend-selected {
+  background: #367c6b;
+  border: 2px solid #edd79a;
 }
-.legend-colors i:nth-child(5) {
-  background: #b6d5a2;
+.legend-point {
+  background: #edd79a;
+  border: 2px solid #192b24;
+  border-radius: 50%;
+}
+.legend-context {
+  background: #273a34;
+  border: 1px solid #668376;
+}
+.legend-work {
+  background: #ffffff;
+  border: 2px solid #edd79a;
+  border-radius: 50%;
 }
 .legend-labels {
   display: flex;
@@ -364,8 +390,7 @@ select {
   width: 100%;
   height: 100%;
 }
-.fallback-map path:hover {
-  fill: #adc994;
+.fallback-map path {
   cursor: pointer;
 }
 .point-choices {
