@@ -25,7 +25,8 @@ export default function Search({
     [open, setOpen] = useState(false),
     [index, setIndex] = useState(-1),
     [remote, setRemote] = useState<Result[]>([]),
-    [loading, setLoading] = useState(false);
+    [loading, setLoading] = useState(false),
+    [failed, setFailed] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const local = towns
     .filter((t) => fold(t.name).includes(fold(value)))
@@ -41,6 +42,8 @@ export default function Search({
   }, []);
   useEffect(() => {
     setRemote([]);
+    setFailed(false);
+    setLoading(false);
     setIndex(-1);
     if (value.trim().length < 2) return;
     const controller = new AbortController();
@@ -57,6 +60,7 @@ export default function Search({
           ...d.agents.map((a: Result) => ({ ...a, kind: "agente" })),
         ]);
       } catch {
+        if (!controller.signal.aborted) setFailed(true);
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -142,7 +146,11 @@ export default function Search({
           ))}
           {!results.length && (
             <p>
-              {loading ? "Buscando…" : "Nenhum resultado. Tente outro nome."}
+              {loading
+                ? "Buscando…"
+                : failed
+                  ? "Busca de obras indisponível. Tente novamente ou escolha um município."
+                  : "Nenhum resultado. Tente outro nome."}
             </p>
           )}
         </div>

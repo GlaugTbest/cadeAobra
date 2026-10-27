@@ -2,20 +2,20 @@
 name: Cadê a Obra?
 description: Atlas público de obras do Piauí, com consulta direta e fontes verificáveis.
 colors:
-  background: "#101918"
-  panel: "#192320"
-  divider: "#34423a"
-  text: "#f0f1e9"
-  muted: "#b0bdb0"
-  selection: "#edd79a"
-  map-zero: "#263632"
-  map-one: "#225c53"
-  map-five: "#338775"
-  map-twenty: "#68ac83"
-  map-hundred: "#a8cf95"
-  map-five-hundred: "#dee9b6"
-  map-selected: "#367c6b"
-  map-context: "#273a34"
+  background: "#0b171b"
+  panel: "#13282e"
+  divider: "#2d484f"
+  text: "#f0f7f8"
+  muted: "#b1c7cb"
+  selection: "#ffc45c"
+  map-zero: "#20383d"
+  map-one: "#155e68"
+  map-five: "#148b87"
+  map-twenty: "#27b5a2"
+  map-hundred: "#83dac1"
+  map-five-hundred: "#dcf6b9"
+  map-selected: "#126f70"
+  map-context: "#20383d"
   map-hover: "#ffffff"
 typography:
   title:
@@ -51,22 +51,22 @@ spacing:
   search-inset-mobile: "14px"
 components:
   search:
-    backgroundColor: "#243027"
+    backgroundColor: "#19343a"
     textColor: "{colors.text}"
     rounded: "{rounded.field}"
     height: "48px"
     padding: "0 13px"
   filter:
-    backgroundColor: "#1d2921"
-    textColor: "#e2e8da"
+    backgroundColor: "#19343a"
+    textColor: "#e5f1f3"
     rounded: "{rounded.filter}"
     padding: "10px 22px 10px 9px"
   map-control:
-    backgroundColor: "#1b2621"
+    backgroundColor: "#19343a"
     textColor: "{colors.text}"
     size: "38px"
   map-control-mobile:
-    backgroundColor: "#1b2621"
+    backgroundColor: "#19343a"
     textColor: "{colors.text}"
     size: "44px"
   mobile-handle:
@@ -119,7 +119,7 @@ O título do recorte reduz para (27px) no celular; os indicadores reduzem para (
 
 Aplicação em altura de viewport dinâmica, com cabeçalho, área de trabalho e rodapé. No desktop, painel esquerdo de (408px), busca acima dos resultados e mapa à direita. O painel passa a (360px) até (1050px), e a (440px) a partir de (1600px). Lista, ficha e perfil compartilham o mesmo painel rolável.
 
-Até (700px), cabeçalho de (62px), busca no topo e painel inferior. A entrada inicial recolhe o painel para (44px); expandido, ele ocupa (49%) da área de trabalho. O mapa usa somente o espaço livre acima do painel. Ao recolher ou expandir, o mapa redimensiona e reenquadra o estado ou município selecionado nessa área efetiva. A navegação para um resultado expande o painel.
+Até (700px), cabeçalho de (62px), busca no topo e painel inferior. A entrada inicial recolhe o painel para (52px); expandido, ele ocupa (58%) da área de trabalho. O mapa usa somente o espaço livre acima do painel. Ao recolher ou expandir, o mapa redimensiona e reenquadra o estado ou município selecionado nessa área efetiva. A navegação para um resultado expande o painel.
 
 ## Elevation & Depth
 
@@ -154,3 +154,8 @@ O foco visível usa contorno amarelo de (2px), com afastamento de (4px). A câme
 - **Don't** usar estética eleitoral, cores partidárias ou fotografias inventadas.
 - **Don't** transformar cada linha de resultado em cartão decorativo.
 - **Don't** representar uma obra sem coordenadas por um ponto inventado no centro do município.
+
+
+## Refinamento para publicacao
+
+Paleta cartografica em petroleo, turquesa e esmeralda, com selecao ambar. Panorama por situacao em controles compactos de tres colunas, ordenacao das obras e investimento em destaque na ficha. Legenda recolhivel no celular, com painel expandido ocupando 58% da area de trabalho. A consulta complementar preserva datas reais, usa estados de carregamento/erro e oferece nova tentativa. Imagem de compartilhamento usa a malha e as contagens reais do snapshot.

@@ -52,6 +52,8 @@ type Listing = {
   page: number;
   pages: number;
   totals: { count: number; planned: number; known: number };
+  statusCounts?: Record<string, number>;
+  locatedCount?: number;
   counts: Record<string, number>;
   statuses: string[];
   categories: string[];
@@ -81,8 +83,11 @@ export default function Explorer() {
     [error, setError] = useState(""),
     [loading, setLoading] = useState(true),
     [detailLoading, setDetailLoading] = useState(false),
+    [enriching, setEnriching] = useState(false),
+    [enrichmentFailed, setEnrichmentFailed] = useState(false),
+    [enrichmentAttempt, setEnrichmentAttempt] = useState(0),
     [tab, setTab] = useState<"works" | "cities">("works"),
-    [collapsed, setCollapsed] = useState(false),
+    [collapsed, setCollapsed] = useState(true),
     [about, setAbout] = useState(false),
     [toast, setToast] = useState("");
   const panel = useRef<HTMLDivElement>(null),
@@ -105,7 +110,7 @@ export default function Explorer() {
       )
         p.delete("mapa");
       if (
-        ["municipio", "situacao", "categoria", "agente", "papel"].some(
+        ["municipio", "situacao", "categoria", "agente", "papel", "ordem"].some(
           (k) =>
             patch[k] !== undefined &&
             patch[k] !== String(previous.get(k) || ""),
@@ -202,6 +207,43 @@ export default function Explorer() {
     return () => clearTimeout(t);
   }, [toast]);
   useEffect(() => {
+    if (!work || !detail || detail.work.id !== work) return;
+    const controller = new AbortController();
+    setEnriching(true);
+    setEnrichmentFailed(false);
+    fetch("/api/details?obra=" + encodeURIComponent(work), {
+      signal: controller.signal,
+    })
+      .then(async (r) => {
+        if (!r.ok) throw Error();
+        return r.json();
+      })
+      .then((d) => {
+        setEnrichmentFailed(
+          Object.values(d.enrichment).some(
+            (e) => (e as { state: string }).state === "error",
+          ),
+        );
+        setDetail((current) =>
+          current?.work.id === work
+            ? {
+                ...current,
+                work: { ...current.work, enrichment: d.enrichment },
+              }
+            : current,
+        );
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setEnrichmentFailed(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setEnriching(false);
+      });
+    return () => controller.abort();
+    // Enrich once per opened record; updating its enrichment must not restart the request.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [work, detail?.work.id, enrichmentAttempt]);
+  useEffect(() => {
     if (!about) return;
     const trap = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
@@ -255,7 +297,9 @@ export default function Explorer() {
   );
   async function share() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("mapa");
+      await navigator.clipboard.writeText(url.toString());
       setToast("Link copiado. Você pode compartilhar esta consulta.");
     } catch {
       setToast("Copie o endereço da página para compartilhar.");
@@ -369,6 +413,9 @@ export default function Explorer() {
               ) : detail ? (
                 <WorkDetail
                   detail={detail}
+                  enriching={enriching}
+                  enrichmentFailed={enrichmentFailed}
+                  onRetry={() => setEnrichmentAttempt((v) => v + 1)}
                   onBack={() => navigate({ obra: "" })}
                   onAgent={chooseAgent}
                   onShare={share}
@@ -487,6 +534,32 @@ export default function Explorer() {
                     <span>investimento previsto</span>
                   </div>
                 </div>
+                {listing?.statusCounts && (
+                  <div
+                    className="status-overview"
+                    aria-label="Panorama das obras no recorte"
+                  >
+                    {Object.entries(listing.statusCounts)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([status, count]) => (
+                        <button
+                          key={status}
+                          className={"status-count " + statusClass(status)}
+                          aria-pressed={params.get("situacao") === status}
+                          onClick={() =>
+                            navigate({
+                              situacao:
+                                params.get("situacao") === status ? "" : status,
+                            })
+                          }
+                        >
+                          <i />
+                          <span>{status}</span>
+                          <strong>{count.toLocaleString("pt-BR")}</strong>
+                        </button>
+                      ))}
+                  </div>
+                )}
                 <p className="summary-note">
                   {listing?.totals.known.toLocaleString("pt-BR") ?? "—"} obras
                   com valor informado. Previsão não é pagamento.
@@ -574,6 +647,20 @@ export default function Explorer() {
                     </button>
                   )}
                 </div>
+                {tab === "works" && (
+                  <label className="result-order">
+                    Ordenar obras
+                    <select
+                      aria-label="Ordenar obras"
+                      value={params.get("ordem") || "relevancia"}
+                      onChange={(e) => navigate({ ordem: e.target.value })}
+                    >
+                      <option value="relevancia">Em andamento primeiro</option>
+                      <option value="investimento">Maior investimento</option>
+                      <option value="nome">Nome da obra</option>
+                    </select>
+                  </label>
+                )}
                 {loading && (
                   <div
                     className="load-line"
@@ -684,7 +771,7 @@ export default function Explorer() {
                     <Info size={14} />
                   </button>
                   <small>
-                    Consulta:{" "}
+                    Base consultada em{" "}
                     {listing ? date(listing.metadata.consultedAt) : "…"}
                     {stale ? " · base desatualizada" : ""}
                   </small>

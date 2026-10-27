@@ -1,5 +1,15 @@
 # Entrega e verificação — 27/10/2026
 
+## Versão preparada para divulgação — revisão de 27/10/2026
+
+Interface refinada em petróleo, turquesa, esmeralda e âmbar; panorama por situação no recorte inteiro, categorias equivalentes reunidas, ordenação por andamento/investimento/nome, resumo financeiro na ficha e legenda móvel recolhível. Caracteres de controle são corrigidos somente na apresentação; registros brutos, IDs e valores não são reescritos. Ícone e imagem Open Graph incluídos; a imagem usa geografia e contagens reais da base versionada.
+
+Detalhes oficiais agora são consultados ao abrir uma obra em `/api/details`, com leitura progressiva, limites de tempo/paginação/concorrência, preservação do resultado anterior e nova tentativa. A data de consulta é armazenada junto ao resultado em cache. Verificação real da obra 33112.22-36 retornou 3,29% de execução e dois registros de empenho. Campos ausentes permanecem ausentes; valor previsto não vira pagamento. A cobertura básica segue a data da carga, separada das datas dos detalhes consultados.
+
+Validações desta revisão: 22 testes internos, build e TypeScript passaram; 14 testes de navegação passaram em desktop e celular emulado, incluindo erros da fonte, nova tentativa, contagens, ordenação, metadados e permissões públicas. Lighthouse móvel local: 100 em acessibilidade, boas práticas e SEO; sem falhas retornadas na execução. A medição não representa desempenho em aparelhos físicos. Revisão independente corrigiu datas do cache, limites totais de consulta e nova tentativa após falha parcial.
+
+Migrations `public_explorer_insights` e `descriptive_work_order` aplicadas ao projeto Supabase existente. CI e sincronização fixados no Ubuntu 24.04 para compatibilidade com o navegador dos testes. A carga integral diária continua dependendo dos secrets do environment `production` no GitHub; a nova consulta dos detalhes funciona sem chave de serviço e não é apresentada como sincronização integral diária.
+
 ## Sistema implementado
 
 Mapa municipal do Piauí, busca por teclado de municípios/obras/agentes, filtros, listas paginadas, fichas com categorias financeiras separadas, perfis documentados, links permanentes e histórico de navegação. Painel móvel compacto e expansível, mapa reenquadrado na área disponível e lista alternativa. Administração com Auth, perfis, evidências privadas, publicação em etapas e auditoria. Importação oficial retomável e ativação atômica de versões, preservando curadoria e progresso de enriquecimento.

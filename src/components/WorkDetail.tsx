@@ -1,13 +1,14 @@
 "use client";
+import { useState } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
   MapPin,
-  CalendarDays,
   ExternalLink,
-  Building2,
   FileText,
   Share2,
+  RefreshCw,
+  ChevronDown,
 } from "lucide-react";
 import { WorkVisual } from "./WorkVisual";
 import {
@@ -15,6 +16,7 @@ import {
   money,
   statusClass,
   numberOrNull,
+  API,
   type Work,
   type Agent,
   type Municipality,
@@ -31,12 +33,19 @@ export default function WorkDetail({
   onBack,
   onAgent,
   onShare,
+  enriching = false,
+  enrichmentFailed = false,
+  onRetry,
 }: {
   detail: Detail;
   onBack: () => void;
   onAgent: (id: string) => void;
   onShare: () => void;
+  enriching?: boolean;
+  enrichmentFailed?: boolean;
+  onRetry?: () => void;
 }) {
+  const [showDescription, setShowDescription] = useState(false);
   const { work: w } = detail;
   const execution = [...w.enrichment.execution.rows].sort((a, b) =>
     String(b.dt_atualizacao_execucao ?? "").localeCompare(
@@ -68,15 +77,51 @@ export default function WorkDetail({
           · PI
         </p>
         <span className="record-id">Obrasgov {w.id}</span>
+        <div className="detail-summary">
+          <div>
+            <strong>{money(w.planned, true)}</strong>
+            <span>investimento previsto</span>
+          </div>
+          {percentage !== null && (
+            <div>
+              <strong>{percentage.toLocaleString("pt-BR")}%</strong>
+              <span>execução física informada</span>
+            </div>
+          )}
+        </div>
         <WorkVisual
           name={w.name}
           category={w.category}
           hasLocation={w.locations.length > 0}
         />
       </div>
+      <div className="detail-live-note" role="status">
+        <RefreshCw size={15} className={enriching ? "is-spinning" : ""} />
+        <span>
+          {enriching
+            ? "Consultando execução e dados financeiros na fonte oficial…"
+            : enrichmentFailed
+              ? "Não foi possível atualizar os detalhes. A última consulta disponível foi preservada."
+              : "Dados oficiais com data de consulta em cada seção."}
+        </span>
+        {enrichmentFailed && (
+          <button onClick={onRetry}>Tentar novamente</button>
+        )}
+      </div>
       <section className="detail-section">
         <h2>Sobre esta obra</h2>
-        <p>{w.description || "Descrição não informada na fonte."}</p>
+        {w.description && w.description !== w.name && (
+          <>
+            <button
+              className="description-toggle"
+              aria-expanded={showDescription}
+              onClick={() => setShowDescription((v) => !v)}
+            >
+              Descrição da fonte <ChevronDown size={15} />
+            </button>
+            {showDescription && <p>{w.description}</p>}
+          </>
+        )}
         <dl className="metadata-list">
           <div>
             <dt>Categoria</dt>
@@ -143,6 +188,10 @@ export default function WorkDetail({
               value={Math.max(0, Math.min(100, percentage))}
               aria-label="Percentual de execução física"
             />
+            <EnrichmentState
+              value={w.enrichment.execution}
+              label="Execução física"
+            />
           </>
         ) : (
           <EnrichmentState
@@ -150,6 +199,7 @@ export default function WorkDetail({
             label="Execução física"
           />
         )}
+        <DetailSource id={w.id} endpoint="execucao-fisica" />
       </section>
       <section className="detail-section">
         <h2>Contratos</h2>
@@ -192,6 +242,7 @@ export default function WorkDetail({
             somados como gasto desta obra.
           </p>
         )}
+        <DetailSource id={w.id} endpoint="contrato" />
       </section>
       <section className="detail-section">
         <h2>Empenhado, liquidado e pago</h2>
@@ -217,7 +268,7 @@ export default function WorkDetail({
                 </div>
               ))}
             </dl>
-            {e.codigo_autor_emenda && (
+            {e.codigo_autor_emenda && String(e.codigo_autor_emenda) !== "0" && (
               <p className="quiet-note">
                 Código de autor de emenda: {e.codigo_autor_emenda}. Identidade e
                 vínculo parlamentar ainda não validados.
@@ -229,6 +280,7 @@ export default function WorkDetail({
           Categorias e exercícios distintos permanecem separados. Ausência de
           informação não significa valor zero.
         </p>
+        <DetailSource id={w.id} endpoint="empenho" />
       </section>
       <section className="detail-section">
         <h2>
@@ -344,14 +396,32 @@ function EnrichmentState({
   label: string;
 }) {
   return value.rows.length ? (
-    <p className="quiet-note">Consulta: {date(value.fetchedAt)}</p>
+    <p className="quiet-note">
+      Consulta: {date(value.fetchedAt)}
+      {value.state === "error"
+        ? " · Nova consulta indisponível; exibindo os últimos dados obtidos."
+        : ""}
+    </p>
   ) : (
     <p className="quiet-note">
       {value.state === "not_fetched"
         ? `${label}: detalhe ainda não consultado na fonte.`
         : value.state === "error"
-          ? `${label}: consulta indisponível. Será tentada novamente na sincronização.`
+          ? `${label}: a fonte não respondeu. Use “Tentar novamente” para consultar os detalhes.`
           : `${label}: não informado na fonte consultada em ${date(value.fetchedAt)}.`}
     </p>
+  );
+}
+
+function DetailSource({ id, endpoint }: { id: string; endpoint: string }) {
+  return (
+    <a
+      className="source-link detail-source"
+      href={`${API}/${endpoint}?id_projeto_investimento=${encodeURIComponent(id)}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      Conferir dados na fonte <ExternalLink size={12} />
+    </a>
   );
 }

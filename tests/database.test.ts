@@ -29,6 +29,18 @@ beforeAll(async () => {
     ),
   );
   await db.exec(
+    await readFile(
+      "supabase/migrations/20261027175000_public_explorer_insights.sql",
+      "utf8",
+    ),
+  );
+  await db.exec(
+    await readFile(
+      "supabase/migrations/20261027181000_descriptive_work_order.sql",
+      "utf8",
+    ),
+  );
+  await db.exec(
     `insert into private.administrators values ('${admin}');insert into public.datasets(id,state,metadata) values('v1','complete','{"coverage":{"works":1}}');insert into public.works(dataset_id,id,name,status,category,municipality_ids,data) values('v1','w','Escola','Cadastrada','Educação',array['2200019'],'{}'); insert into public.active_dataset values(true,'v1');insert into public.agents(id,name,type,published) values('a','Responsável','person',true);insert into public.evidence(id,title,issuer,url,excerpt,evidence_date,is_public) values('11111111-1111-4111-8111-111111111112','Documento','Órgão','https://gov.br/doc','Página 1','2026-10-27',true);insert into public.manual_links(id,work_id,agent_id,role,evidence_id,state) values('11111111-1111-4111-8111-111111111113','w','a','Fiscal','11111111-1111-4111-8111-111111111112','draft');`,
   );
 });
@@ -144,6 +156,7 @@ it("busca e agregação no banco respeitam filtros e não revelam rascunhos", as
   const query = (await as("anon", "select list_public_works('2200019') data"))
     .rows as { data: any }[];
   expect(query[0].data.totals.count).toBe(1);
+  expect(query[0].data.statusCounts.Cadastrada).toBe(1);
   expect(query[0].data.counts["2200019"]).toBe(1);
   expect(query[0].data.items).toHaveLength(1);
   const search = (await as("anon", "select search_public('joao') data"))

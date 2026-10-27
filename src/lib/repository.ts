@@ -10,6 +10,7 @@ import {
   type Raw,
 } from "./domain";
 import { publicDb } from "./supabase";
+import { displayText, displayCategory } from "./presentation";
 
 let local: Promise<Snapshot> | undefined;
 const localSnapshot = () =>
@@ -107,7 +108,7 @@ export type Filters = {
 export const matches = (w: Work, f: Filters) =>
   (!f.municipio || w.municipalityIds.includes(f.municipio)) &&
   (!f.situacao || w.status === f.situacao) &&
-  (!f.categoria || w.category === f.categoria) &&
+  (!f.categoria || fold(w.category) === fold(f.categoria)) &&
   (!f.agente ||
     w.links.some(
       (l) => l.agentId === f.agente && (!f.papel || l.role === f.papel),
@@ -124,7 +125,7 @@ export function workSummary(w: Work) {
     roles: [...new Set(w.links.map((l) => l.role))],
   };
 }
-export async function queryPublic(params: URLSearchParams) {
+async function queryRawPublic(params: URLSearchParams) {
   const db = publicDb();
   if (db)
     try {
@@ -194,6 +195,7 @@ export async function queryPublic(params: URLSearchParams) {
           1,
           Math.min(10000, Math.floor(Number(params.get("pagina")) || 1)),
         ),
+        p_order: params.get("ordem") || "relevancia",
       });
       if (r.error || !r.data?.metadata)
         throw r.error || Error("Base não ativada");
@@ -251,11 +253,22 @@ export async function queryPublic(params: URLSearchParams) {
     agente: params.get("agente") || undefined,
     papel: params.get("papel") || undefined,
   };
+  const order = params.get("ordem") || "relevancia";
   const filtered = works
     .filter((w) => matches(w, f))
     .sort(
       (a, b) =>
-        a.name.localeCompare(b.name, "pt-BR") || a.id.localeCompare(b.id),
+        (order === "relevancia"
+          ? Number(b.status === "Em execução") -
+            Number(a.status === "Em execução")
+          : 0) ||
+        (order === "relevancia"
+          ? Number(/^\p{L}/u.test(b.name.trim())) -
+            Number(/^\p{L}/u.test(a.name.trim()))
+          : 0) ||
+        (order !== "nome" ? (b.planned ?? -1) - (a.planned ?? -1) : 0) ||
+        a.name.localeCompare(b.name, "pt-BR") ||
+        a.id.localeCompare(b.id),
     );
   const page = Math.max(1, Math.min(10000, Number(params.get("pagina")) || 1));
   const counts: Record<string, number> = {};
@@ -266,6 +279,13 @@ export async function queryPublic(params: URLSearchParams) {
     page,
     pages: Math.ceil(filtered.length / 30),
     totals: uniqueTotal(filtered),
+    statusCounts: Object.fromEntries(
+      [...new Set(filtered.map((w) => w.status))].map((status) => [
+        status,
+        filtered.filter((w) => w.status === status).length,
+      ]),
+    ),
+    locatedCount: filtered.filter((w) => w.locations.length > 0).length,
     counts,
     statuses: [...new Set(works.map((w) => w.status))].sort(),
     categories: [...new Set(works.map((w) => w.category))].sort(),
@@ -299,4 +319,27 @@ export async function queryPublic(params: URLSearchParams) {
       curationAvailable: c.available,
     },
   };
+}
+
+export async function queryPublic(params: URLSearchParams) {
+  const result = await queryRawPublic(params);
+  if (!result) return result;
+  // Labels are repaired for display. Official IDs, values, dates and raw snapshots stay intact.
+  function present(value: any): any {
+    if (Array.isArray(value)) return value.map(present);
+    if (!value || typeof value !== "object") return value;
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [
+        key,
+        typeof item === "string" && ["name", "description"].includes(key)
+          ? displayText(item)
+          : typeof item === "string" && key === "category"
+            ? displayCategory(item)
+            : key === "categories" && Array.isArray(item)
+              ? [...new Set(item.map(displayCategory))].sort()
+              : present(item),
+      ]),
+    );
+  }
+  return present(result);
 }

@@ -9,6 +9,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import MapWorkMarkers from "./MapWorkMarkers";
 import { type MapPoint as Point } from "@/lib/map-markers";
 import { WorkIcon } from "./WorkVisual";
+import { mapPalette, mapColor } from "@/lib/presentation";
 type Props = {
   city: string;
   counts: Record<string, number>;
@@ -21,14 +22,7 @@ type Props = {
 const stateBounds: [number, number, number, number] = [
   -46.05, -10.95, -40.3, -2.65,
 ];
-const mapScale = [
-  [0, "#263632"],
-  [1, "#225c53"],
-  [5, "#338775"],
-  [20, "#68ac83"],
-  [100, "#a8cf95"],
-  [500, "#dee9b6"],
-] as const;
+const mapScale = mapPalette.scale;
 export default function MapView(props: Props) {
   const container = useRef<HTMLDivElement>(null),
     map = useRef<GLMap | null>(null),
@@ -43,6 +37,7 @@ export default function MapView(props: Props) {
     [rendered, setRendered] = useState(false),
     [fallback, setFallback] = useState(false),
     [choices, setChoices] = useState<Point[]>([]),
+    [legendOpen, setLegendOpen] = useState(false),
     [hover, setHover] = useState({ id: "", name: "" });
   useEffect(() => setChoices([]), [props.city, props.points]);
   useEffect(() => {
@@ -73,7 +68,7 @@ export default function MapView(props: Props) {
             {
               id: "background",
               type: "background",
-              paint: { "background-color": "#101918" },
+              paint: { "background-color": mapPalette.background },
             },
           ],
         },
@@ -122,7 +117,7 @@ export default function MapView(props: Props) {
           id: "borders",
           type: "line",
           source: "municipalities",
-          paint: { "line-color": "#111e1a", "line-width": 0.9 },
+          paint: { "line-color": mapPalette.border, "line-width": 0.85 },
         });
         m.addLayer({
           id: "selection-casing",
@@ -136,7 +131,7 @@ export default function MapView(props: Props) {
           type: "line",
           source: "municipalities",
           filter: ["==", ["get", "codarea"], ""],
-          paint: { "line-color": "#edd79a", "line-width": 4 },
+          paint: { "line-color": mapPalette.accent, "line-width": 3 },
         });
         for (const [id, color, width] of [
           ["hover-casing", "#101918", 5],
@@ -222,7 +217,12 @@ export default function MapView(props: Props) {
       "municipalities",
       "fill-color",
       props.city
-        ? ["case", ["==", ["get", "codarea"], props.city], "#367c6b", "#273a34"]
+        ? [
+            "case",
+            ["==", ["get", "codarea"], props.city],
+            mapPalette.selected,
+            mapPalette.context,
+          ]
         : ["interpolate", ["linear"], ["get", "count"], ...mapScale.flat()],
     );
     for (const layer of ["selection-casing", "selected"])
@@ -305,15 +305,15 @@ export default function MapView(props: Props) {
                 fill={
                   props.city
                     ? props.city === String(f.properties.codarea)
-                      ? "#367c6b"
-                      : "#273a34"
+                      ? mapPalette.selected
+                      : mapPalette.context
                     : mapColor(props.counts[String(f.properties.codarea)] ?? 0)
                 }
                 stroke={
                   hover.id === String(f.properties.codarea)
                     ? "#ffffff"
                     : props.city === String(f.properties.codarea)
-                      ? "#edd79a"
+                      ? mapPalette.accent
                       : "#10231a"
                 }
                 strokeWidth={
@@ -394,45 +394,54 @@ export default function MapView(props: Props) {
           Cada investimento, uma origem.
         </p>
       </div>
-      <div className="map-legend">
-        {props.city ? (
-          <div className="selection-legend">
-            <span>
-              <i className="legend-selected" />
-              Município selecionado
-            </span>
-            <span>
-              <WorkIcon size={13} />
-              Obras com localização
-            </span>
-            {props.work && props.points.some((p) => p.id === props.work) && (
+      <div className={"map-legend " + (legendOpen ? "legend-open" : "")}>
+        <button
+          className="legend-toggle"
+          aria-expanded={legendOpen}
+          onClick={() => setLegendOpen((v) => !v)}
+        >
+          <Layers size={14} /> Legenda
+        </button>
+        <div className="legend-content">
+          {props.city ? (
+            <div className="selection-legend">
               <span>
-                <span className="legend-active-marker">
-                  <WorkIcon size={13} />
-                </span>
-                Obra aberta
+                <i className="legend-selected" />
+                Município selecionado
               </span>
-            )}
-            <span>
-              <i className="legend-context" />
-              Demais municípios
-            </span>
-          </div>
-        ) : (
-          <>
-            <span>Obras únicas no recorte</span>
-            <div className="legend-colors" aria-hidden="true">
-              {mapScale.map(([count, color]) => (
-                <i key={count} style={{ background: color }} />
-              ))}
+              <span>
+                <WorkIcon size={13} />
+                Obras com localização
+              </span>
+              {props.work && props.points.some((p) => p.id === props.work) && (
+                <span>
+                  <span className="legend-active-marker">
+                    <WorkIcon size={13} />
+                  </span>
+                  Obra aberta
+                </span>
+              )}
+              <span>
+                <i className="legend-context" />
+                Demais municípios
+              </span>
             </div>
-            <div className="legend-labels">
-              {mapScale.map(([count]) => (
-                <span key={count}>{count === 500 ? "500+" : count}</span>
-              ))}
-            </div>
-          </>
-        )}
+          ) : (
+            <>
+              <span>Obras únicas no recorte</span>
+              <div className="legend-colors" aria-hidden="true">
+                {mapScale.map(([count, color]) => (
+                  <i key={count} style={{ background: color }} />
+                ))}
+              </div>
+              <div className="legend-labels">
+                {mapScale.map(([count]) => (
+                  <span key={count}>{count === 500 ? "500+" : count}</span>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
       {choices.length > 0 && (
         <div className="point-choices">
@@ -459,7 +468,7 @@ export default function MapView(props: Props) {
               <span className="choice-content">
                 {p.name}
                 <small>
-                  {p.status} � {p.id}
+                  {p.status} · {p.id}
                 </small>
               </span>
             </button>
@@ -468,27 +477,6 @@ export default function MapView(props: Props) {
       )}
       {!geo && <span className="map-loading">Carregando malha do IBGE…</span>}
     </div>
-  );
-}
-function mapColor(count: number) {
-  const next = mapScale.findIndex(([stop]) => stop > count);
-  if (next < 0) return mapScale.at(-1)![1];
-  if (next === 0) return mapScale[0][1];
-  const [low, from] = mapScale[next - 1],
-    [high, to] = mapScale[next];
-  const ratio = (count - low) / (high - low);
-  return (
-    "#" +
-    [1, 3, 5]
-      .map((i) =>
-        Math.round(
-          parseInt(from.slice(i, i + 2), 16) * (1 - ratio) +
-            parseInt(to.slice(i, i + 2), 16) * ratio,
-        )
-          .toString(16)
-          .padStart(2, "0"),
-      )
-      .join("")
   );
 }
 function geometryBounds(g: Geometry): [number, number, number, number] {
