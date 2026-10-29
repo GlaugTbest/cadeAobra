@@ -1,10 +1,14 @@
-# Entrega e verificação — 27/10/2026
+# Entrega e verificação — 28/10/2026
 
 ## Correção da sincronização — 28/10/2026
 
 A execução agendada `40712419293` falhou em `npm run sync` por `UND_ERR_CONNECT_TIMEOUT` ao conectar ao IBGE a partir do runner do GitHub. O importador agora pode usar o par territorial oficial versionado, com verificação de fonte, IDs, nomes e checksum, mantendo a data territorial original separada da nova consulta das obras. Sem cópia válida, a publicação continua bloqueada. O cache de checkpoints agora é salvo também após falhas; a checagem de credenciais foi antecipada para evitar baixar uma base que não poderá ser publicada.
 
-Validação isolada do script completo, simulando indisponibilidade do IBGE e consultando o Obrasgov real: 255 requisições, 6.445 obras, 224 municípios e fonte atualizada em 28/10/2026. Nenhuma escrita em produção foi feita nessa validação. Passaram 29 testes, TypeScript e build de produção. O environment `production` foi conferido e ainda não possui secrets; a publicação diária depende do cadastro de `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`.
+Validação isolada do script completo, simulando indisponibilidade do IBGE e consultando o Obrasgov real: 255 requisições, 6.445 obras, 224 municípios e fonte atualizada em 28/10/2026. Nenhuma escrita em produção foi feita nessa validação. Passaram 29 testes, TypeScript e build de produção.
+
+Após autorização, `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` foram cadastrados nos secrets do environment `production`, sem incluir a chave no código ou nos arquivos locais. A execução real [40796768030](https://github.com/GlaugTbest/cadeAobra/actions/runs/40796768030) terminou com sucesso em 4min39s. O runner usou a cópia territorial verificada após timeout do IBGE, consultou as obras atuais e ativou o dataset `5321bc26fc69b0fafda136ac`, com 6.445 obras e 224 municípios. A versão anterior foi preservada. A ativação ocorreu em 28/10/2026 às 21h56 de Brasília; os horários UTC do log são de 29/10.
+
+Confirmados no banco e na API pública: contagem integral, fonte Obrasgov de 28/10/2026 e acesso à nova obra `164584.22-43`. Os 14 testes de navegação passaram na URL de produção, em computador e celular emulado, após a atualização. O teste que fixava o total em 6.442 foi corrigido para comparar a tela com a base vigente. [CI do ajuste](https://github.com/GlaugTbest/cadeAobra/actions/runs/40796967098) também aprovado. O agendamento diário permanece às 05h17 de Brasília.
 
 ## Versão preparada para divulgação — revisão de 27/10/2026
 
@@ -39,7 +43,7 @@ Windows, Node 24.16.0, build Next de produção em localhost, Chromium headless 
 
 O convite do primeiro administrador foi enviado ao e-mail solicitado e o usuário foi autorizado. A senha é definida pelo destinatário; não foi solicitada nem manuseada nesta conversa.
 
-O workflow diário está preparado, mas precisa de secrets `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` no environment protegido `production` do GitHub. Essa chave de serviço não foi exposta nem adicionada ao repositório. Configure notificações de falha do Actions. Antes de usar links de recuperação/convite em produção, configure a URL pública e redirecionamentos no Supabase Auth.
+O workflow diário está configurado com `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` no environment `production` do GitHub, com publicação real validada em 28/10/2026. A chave de serviço não foi adicionada ao repositório. As falhas ficam nos logs e artefatos do Actions; as preferências de notificação da conta não foram alteradas. Antes de usar links de recuperação/convite em produção, configure a URL pública e redirecionamentos no Supabase Auth.
 
 ## Publicação confirmada
 
