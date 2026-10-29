@@ -66,10 +66,15 @@ test("busca por teclado, obra, perfil, histórico e URL direta", async ({
 }, info) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  const statewide = await (await page.request.get("/api/public")).json();
+  expect(statewide.totals.count).toBeGreaterThan(0);
+  const expectedWorks = new Intl.NumberFormat("pt-BR").format(
+    statewide.totals.count,
+  );
   await page.goto("/");
   if (info.project.name === "mobile")
     await page.getByRole("button", { name: /ver lista/ }).click();
-  await expect(page.locator(".summary strong").first()).toHaveText("6.442");
+  await expect(page.locator(".summary strong").first()).toHaveText(expectedWorks);
   await mkdir(".impeccable/review", { recursive: true });
   await expect(page.locator(".maplibregl-canvas")).toBeVisible();
   await expect(page.locator(".map-surface")).toHaveAttribute(
@@ -123,7 +128,7 @@ test("busca por teclado, obra, perfil, histórico e URL direta", async ({
   await page.goto(detailUrl);
   await expect(page.locator(".detail-intro h1")).toHaveText(title);
   await page.goto("/");
-  await expect(page.locator(".summary strong").first()).toHaveText("6.442");
+  await expect(page.locator(".summary strong").first()).toHaveText(expectedWorks);
   await expect(page.locator(".maplibregl-canvas")).toBeVisible();
   if (info.project.name === "mobile") {
     await expect(page.locator(".side-panel")).toHaveClass(/collapsed/);
