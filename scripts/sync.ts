@@ -6,12 +6,17 @@ import {
   normalizeWork,
   type Snapshot,
   type Raw,
-  type Boundary,
   type Agent,
   type Link,
 } from "../src/lib/domain";
 import { collectPages, retryJson, type Page } from "../src/lib/ingestion";
 import { createClient } from "@supabase/supabase-js";
+import {
+  loadTerritory,
+  geometryHash,
+  MUNICIPALITIES_SOURCE,
+  GEOMETRY_SOURCE,
+} from "../src/lib/territory";
 const started = new Date().toISOString(),
   cycle = process.env.SYNC_CYCLE || started.slice(0, 10);
 if (!/^[a-zA-Z0-9_-]{1,60}$/.test(cycle)) throw Error("SYNC_CYCLE inválido");
@@ -64,30 +69,24 @@ const log = {
   state: "running",
   requests: 0,
   error: null as string | null,
+  territory: null as { consultedAt: string; mode: string } | null,
 };
 try {
-  const [towns, geo] = await Promise.all([
-    request<Raw[]>(
-      "https://servicodados.ibge.gov.br/api/v1/localidades/estados/22/municipios",
-    ),
-    request<{ type: string; features: Boundary[] }>(
-      "https://servicodados.ibge.gov.br/api/v3/malhas/estados/22?formato=application/vnd.geo%2Bjson&qualidade=minima&intrarregiao=municipio",
-    ),
-  ]);
-  const municipalities = towns
-    .map((t) => ({ id: String(t.id), name: t.nome, uf: "PI" }))
-    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  const territory = await loadTerritory(
+    request,
+    async () => {
+      const [municipalities, geo, provenance] = await Promise.all(
+        ["municipalities.json", "piaui.geojson", "provenance.json"].map(
+          async (file) => JSON.parse(await readFile(`public/data/${file}`, "utf8")),
+        ),
+      );
+      return { municipalities, geo, provenance };
+    },
+    started,
+  );
+  const { municipalities, geo } = territory;
+  log.territory = { consultedAt: territory.consultedAt, mode: territory.mode };
   const ids = new Set(municipalities.map((t) => t.id));
-  if (
-    ids.size !== geo.features.length ||
-    !geo.features.every((f) => ids.has(String(f.properties.codarea)))
-  )
-    throw Error("Malha e cadastro municipal divergem");
-  geo.features.forEach((f) => {
-    f.properties.name = municipalities.find(
-      (t) => t.id === String(f.properties.codarea),
-    )!.name;
-  });
   const [projects, geometry] = await Promise.all([
     resource(
       "projeto-investimento",
@@ -324,13 +323,11 @@ try {
       {
         consultedAt: started,
         sourceUpdatedAt,
-        municipalitiesSource:
-          "https://servicodados.ibge.gov.br/api/v1/localidades/estados/22/municipios",
-        geometrySource:
-          "https://servicodados.ibge.gov.br/api/v3/malhas/estados/22",
-        geometrySha256: createHash("sha256")
-          .update(JSON.stringify(geo))
-          .digest("hex"),
+        territoryConsultedAt: territory.consultedAt,
+        territoryMode: territory.mode,
+        municipalitiesSource: MUNICIPALITIES_SOURCE,
+        geometrySource: GEOMETRY_SOURCE,
+        geometrySha256: geometryHash(geo),
         coverage: snapshot.coverage,
       },
       null,
