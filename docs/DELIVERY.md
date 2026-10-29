@@ -1,5 +1,11 @@
 # Entrega e verificação — 27/10/2026
 
+## Correção da sincronização — 28/10/2026
+
+A execução agendada `40712419293` falhou em `npm run sync` por `UND_ERR_CONNECT_TIMEOUT` ao conectar ao IBGE a partir do runner do GitHub. O importador agora pode usar o par territorial oficial versionado, com verificação de fonte, IDs, nomes e checksum, mantendo a data territorial original separada da nova consulta das obras. Sem cópia válida, a publicação continua bloqueada. O cache de checkpoints agora é salvo também após falhas; a checagem de credenciais foi antecipada para evitar baixar uma base que não poderá ser publicada.
+
+Validação isolada do script completo, simulando indisponibilidade do IBGE e consultando o Obrasgov real: 255 requisições, 6.445 obras, 224 municípios e fonte atualizada em 28/10/2026. Nenhuma escrita em produção foi feita nessa validação. Passaram 29 testes, TypeScript e build de produção. O environment `production` foi conferido e ainda não possui secrets; a publicação diária depende do cadastro de `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`.
+
 ## Versão preparada para divulgação — revisão de 27/10/2026
 
 Interface refinada em petróleo, turquesa, esmeralda e âmbar; panorama por situação no recorte inteiro, categorias equivalentes reunidas, ordenação por andamento/investimento/nome, resumo financeiro na ficha e legenda móvel recolhível. Caracteres de controle são corrigidos somente na apresentação; registros brutos, IDs e valores não são reescritos. Ícone e imagem Open Graph incluídos; a imagem usa geografia e contagens reais da base versionada.
